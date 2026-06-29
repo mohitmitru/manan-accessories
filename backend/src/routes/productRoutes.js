@@ -7,7 +7,6 @@ import { createId, readStore, usingMongo, withSalePrice, writeStore } from "../c
 
 const router = express.Router();
 
-
 router.get("/", asyncHandler(async (req, res) => {
   const { search = "", category = "" } = req.query;
 
@@ -22,7 +21,6 @@ router.get("/", asyncHandler(async (req, res) => {
   }
 
   const query = {};
-
   if (search) query.name = { $regex: search, $options: "i" };
   if (category) query.category = { $regex: `^${category}$`, $options: "i" };
 
@@ -43,6 +41,8 @@ router.get("/:id", asyncHandler(async (req, res) => {
 }));
 
 router.post("/", protect, upload.array("images", 5), asyncHandler(async (req, res) => {
+  const imageUrls = await uploadManyToCloudinary(req.files, "manan-accessories/products");
+
   if (!usingMongo()) {
     const data = readStore();
     const product = {
@@ -54,7 +54,7 @@ router.post("/", protect, upload.array("images", 5), asyncHandler(async (req, re
       stock: Number(req.body.stock || 0),
       description: req.body.description,
       featured: req.body.featured === "true",
-      images: toImageUrls(req.files),
+      images: imageUrls,
       createdAt: new Date().toISOString()
     };
     data.products.push(product);
@@ -68,23 +68,23 @@ router.post("/", protect, upload.array("images", 5), asyncHandler(async (req, re
     discount: Number(req.body.discount || 0),
     stock: Number(req.body.stock || 0),
     featured: req.body.featured === "true",
-    images: toImageUrls(req.files)
+    images: imageUrls
   });
 
   res.status(201).json(product);
 }));
 
 router.put("/:id", protect, upload.array("images", 5), asyncHandler(async (req, res) => {
+  const newImages = await uploadManyToCloudinary(req.files, "manan-accessories/products");
+
   if (!usingMongo()) {
     const data = readStore();
     const index = data.products.findIndex((item) => item._id === req.params.id);
     if (index === -1) return res.status(404).json({ message: "Product not found" });
 
     const current = data.products[index];
-    const newImages = await uploadManyToCloudinary(req.files, "manan-accessories/products");
-    const keptImages = req.body.existingImages
-      ? JSON.parse(req.body.existingImages)
-      : current.images;
+    const keptImages = req.body.existingImages ? JSON.parse(req.body.existingImages) : current.images;
+
     data.products[index] = {
       ...current,
       name: req.body.name ?? current.name,
@@ -97,6 +97,7 @@ router.put("/:id", protect, upload.array("images", 5), asyncHandler(async (req, 
       images: [...keptImages, ...newImages],
       updatedAt: new Date().toISOString()
     };
+
     writeStore(data);
     return res.json(withSalePrice(data.products[index]));
   }
@@ -104,10 +105,8 @@ router.put("/:id", protect, upload.array("images", 5), asyncHandler(async (req, 
   const product = await Product.findById(req.params.id);
   if (!product) return res.status(404).json({ message: "Product not found" });
 
- const imageUrls = await uploadManyToCloudinary(req.files, "manan-accessories/products");
-  const keptImages = req.body.existingImages
-    ? JSON.parse(req.body.existingImages)
-    : product.images;
+  const keptImages = req.body.existingImages ? JSON.parse(req.body.existingImages) : product.images;
+
   Object.assign(product, {
     name: req.body.name ?? product.name,
     price: req.body.price !== undefined ? Number(req.body.price) : product.price,

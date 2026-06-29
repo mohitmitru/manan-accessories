@@ -1,0 +1,403 @@
+{
+  "products": [
+    {
+      "_id": "94b2c5deead262ac6cd12358",
+      "name": "Black Sunglasses",
+      "price": 999,
+      "discount": 77,
+      "category": "Sunglasses",
+      "stock": 98,
+      "description": "Best Black Sunglasses",
+      "featured": false,
+      "images": [
+        "/uploads/1782465379317-ChatGPT-Image-Jun-21--2026--10-46-55-AM.png",
+        "/uploads/1782465405985-ChatGPT-Image-Jun-21--2026--10-51-06-AM.png",
+        "/uploads/1782465432020-ChatGPT-Image-Jun-21--2026--10-49-28-AM.png"
+      ],
+      "createdAt": "2026-06-26T06:01:00.169Z",
+      "updatedAt": "2026-06-26T10:02:42.830Z"
+    },
+    {
+      "_id": "7ac40e3a8c5f7ad945a9373e",
+      "name": "Blue Sunglasses",
+      "price": 999,
+      "discount": 76,
+      "category": "Sunglasses",
+      "stock": 99,
+      "description": "Best sungalsses ",
+      "featured": false,
+      "images": [
+        "/uploads/1782465555789-ChatGPT-Image-Jun-20--2026--03-26-39-PM.png",
+        "/uploads/1782465555800-ChatGPT-Image-Jun-20--2026--03-24-43-PM.png",
+        "/uploads/1782465555810-ChatGPT-Image-Jun-20--2026--03-23-25-PM.png"
+      ],
+      "createdAt": "2026-06-26T09:19:15.828Z",
+      "updatedAt": "2026-06-26T10:01:48.933Z"
+    },
+    {
+      "_id": "aa30874015d5c8a137634b3c",
+      "name": "Yellow Sunglasses",
+      "price": 999,
+      "discount": 77,
+      "category": "Sunglasses",
+      "stock": 93,
+      "description": "Best Yellow Sunglasses",
+      "featured": false,
+      "images": [
+        "/uploads/1782468612236-ChatGPT-Image-Jun-20--2026--02-46-31-PM.png",
+        "/uploads/1782468699173-ChatGPT-Image-Jun-20--2026--02-49-59-PM.png",
+        "/uploads/1782468699180-ChatGPT-Image-Jun-20--2026--02-48-52-PM.png"
+      ],
+      "createdAt": "2026-06-26T10:10:12.253Z",
+      "updatedAt": "2026-06-26T10:11:39.196Z"
+    }
+  ],
+  "orders": [
+    {
+      "_id": "MA-1782577265923-D0A129",
+      "paymentId": "12c90779810e46dc40a0d636",
+      "customer": {
+        "name": "Mohit Mitru",
+        "phone": "7854215842",
+        "email": "mohit13mitru@gmail.com",
+        "address": "awesrdtyuiojhgfdzrdtfygukjn"
+      },
+      "items": [
+        {
+          "product": "aa30874015d5c8a137634b3c",
+          "name": "Yellow Sunglasses",
+          "image": "/uploads/1782468612236-ChatGPT-Image-Jun-20--2026--02-46-31-PM.png",
+          "price": 230,
+          "quantity": 1
+        }
+      ],
+      "totalAmount": 230,
+      "discountAmount": 23,
+      "payableAmount": 207,
+      "couponCode": "MANAN10",
+      "paymentMethod": "UPI_PAY",
+      "paymentStatus": "Paid",
+      "transactionId": "UPI_PAY-1782577265859-260F8BDF",
+      "gatewayPaymentId": "manual_233cc4b95133c287",
+      "paymentScreenshot": "/uploads/1782577265891-ChatGPT-Image-Jun-21--2026--10-51-06-AM.png",
+      "paidAt": "2026-06-28T09:17:07.450Z",
+      "orderStatus": "Processing",
+      "createdAt": "2026-06-27T16:21:05.923Z"
+    }
+  ],
+  "payment": {
+    "_id": "payment-settings",
+    "upiId": "845147846512@ptyes",
+    "qrCode": "",
+    "paymentLink": "",
+    "instructions": "upload Payment Screenshot"
+  },
+  "payments": [
+    {
+      "_id": "17c47b8b1062f068c895c4c0",
+      "gateway": "RAZORPAY",
+      "status": "Success",
+      "amount": 179,
+      "currency": "INR",
+      "transactionId": "RAZORPAY-1782462196303-8C6C1FB4",
+      "gatewayPaymentId": "pay_cddc5596d912037c",
+      "verificationToken": "83a557150ba0e3b0ee5289ce55205a15f35319d817fb38a8",
+      "customer": {
+        "name": "Mohit Mitru",
+        "phone": "8976453698786",
+        "email": "mohit133@gmail.com",
+        "address": "esrtdyugiofdsfsdhkjlkhgfx"
+      },
+      "items": [
+        {
+          "product": "94b2c5deead262ac6cd12358",
+          "quantity": 1
+        }
+      ],
+      "couponCode": "MANAN10",
+      "createdAt": "2026-06-26T08:23:16.304Z",
+      "orderId": "MA-1782462196337-17719E"
+    },
+    {
+      "_id": "85178023ac9999d60dd9b93d",
+      "gateway": "UPI_QR",
+      "status": "Success",
+      "amount": 179,
+      "currency": "INR",
+      "transactionId": "UPI_QR-1782462370575-97DC1C42",
+      "gatewayPaymentId": "pay_692bded78e092d1e",
+      "verificationToken": "0e2ebef7bbb7b59ab3f78132a5b02f5f00af50b8a33dd81f",
+      "customer": {
+        "name": "wwmsndfbchewjnd",
+        "phone": "546821546832",
+        "email": "fmjkwhidgcms@gmail.com",
+        "address": "ggjkl;gfhjfhjkhugjfghildjoijwol"
+      },
+      "items": [
+        {
+          "product": "94b2c5deead262ac6cd12358",
+          "quantity": 1
+        }
+      ],
+      "couponCode": "MANAN10",
+      "createdAt": "2026-06-26T08:26:10.575Z",
+      "orderId": "MA-1782462370629-C74AB4"
+    },
+    {
+      "_id": "66d94fcb59df42cb8e62be1f",
+      "gateway": "UPI_QR",
+      "status": "Success",
+      "amount": 179,
+      "currency": "INR",
+      "transactionId": "UPI_QR-1782462606502-9B89172B",
+      "gatewayPaymentId": "pay_6e5f6a238d69eac5",
+      "verificationToken": "7741e50f3b83b922cf987a4de9adf90f515d681cd6df3bb3",
+      "customer": {
+        "name": "Mohit Mitru",
+        "phone": "654321546",
+        "email": "mohit13mitru@gmail.com",
+        "address": "drtyfugihojk;oligjfhdgghjgkhlj;"
+      },
+      "items": [
+        {
+          "product": "94b2c5deead262ac6cd12358",
+          "quantity": 1
+        }
+      ],
+      "couponCode": "MANAN10",
+      "createdAt": "2026-06-26T08:30:06.503Z",
+      "orderId": "MA-1782462606541-AADC58"
+    },
+    {
+      "_id": "44808ad5f35a965b876e2894",
+      "gateway": "UPI_QR",
+      "status": "Success",
+      "amount": 179,
+      "currency": "INR",
+      "transactionId": "UPI_QR-1782462916099-644B7605",
+      "gatewayPaymentId": "pay_6acb667f5168f5db",
+      "verificationToken": "1040a3e3c7f6c698572493b257adbad47cfc9a8fae30a05e",
+      "customer": {
+        "name": "Mohit Mitru",
+        "phone": "7854210415454",
+        "email": "mohit13mitru@gmail.com",
+        "address": "wertyuiop[olkjhgfdszxfcvbnm,"
+      },
+      "items": [
+        {
+          "product": "94b2c5deead262ac6cd12358",
+          "quantity": 1
+        }
+      ],
+      "couponCode": "MANAN10",
+      "createdAt": "2026-06-26T08:35:16.099Z",
+      "orderId": "MA-1782462916137-E86C77"
+    },
+    {
+      "_id": "5d9b1562754e95cfb66ab9a0",
+      "gateway": "UPI_QR",
+      "status": "Success",
+      "amount": 179,
+      "currency": "INR",
+      "transactionId": "UPI_QR-1782464193443-03153D98",
+      "gatewayPaymentId": "manual_bd2d794d32b04fb7",
+      "verificationToken": "f8901d8056810a88860d71a2177f5efea3a17f584c6798ab",
+      "customer": {
+        "name": "Mohit Mitru",
+        "phone": "986532415415",
+        "email": "mohit13mitru@gmail.com",
+        "address": "rtyuiopiuhgfdghjkljhg"
+      },
+      "items": [
+        {
+          "product": "94b2c5deead262ac6cd12358",
+          "quantity": 1
+        }
+      ],
+      "couponCode": "MANAN10",
+      "createdAt": "2026-06-26T08:56:33.443Z",
+      "paymentScreenshot": "/uploads/1782464193522-ChatGPT-Image-Jun-21--2026--10-51-06-AM.png",
+      "orderId": "MA-1782464193563-EFCF68"
+    },
+    {
+      "_id": "45d94d01f78620550287129d",
+      "gateway": "UPI_QR",
+      "status": "Failed",
+      "amount": 230,
+      "currency": "INR",
+      "transactionId": "UPI_QR-1782468997009-FAAFE699",
+      "gatewayPaymentId": "manual_4665db8a9b2b852b",
+      "verificationToken": "48d2a097449440708b65519d5e36e0104efe470c1e1146a3",
+      "customer": {
+        "name": "wertyuiop",
+        "phone": "785421024578",
+        "email": "mohit13mitru@gmail.com",
+        "address": "waerstdyuiopk';klmnkbvcxzferstdyfugh"
+      },
+      "items": [
+        {
+          "product": "aa30874015d5c8a137634b3c",
+          "quantity": 1
+        }
+      ],
+      "couponCode": "",
+      "createdAt": "2026-06-26T10:16:37.009Z",
+      "paymentScreenshot": "/uploads/1782468997062-ChatGPT-Image-Jun-20--2026--03-26-39-PM.png",
+      "orderId": "MA-1782468997094-F6A89C"
+    },
+    {
+      "_id": "198c0b444762e453bc0a2409",
+      "gateway": "UPI_QR",
+      "status": "Success",
+      "amount": 230,
+      "currency": "INR",
+      "transactionId": "UPI_QR-1782469278923-EF6638AD",
+      "gatewayPaymentId": "manual_a9479c0450d159b1",
+      "verificationToken": "9d2d43d48af08cbad2a3c6c651829a9904a1ccab07ae9318",
+      "customer": {
+        "name": "Mohit Mitru",
+        "phone": "897645312865",
+        "email": "mohit13mitru@gmail.com",
+        "address": "dfghjklmlkjghxck"
+      },
+      "items": [
+        {
+          "product": "aa30874015d5c8a137634b3c",
+          "quantity": 1
+        }
+      ],
+      "couponCode": "",
+      "createdAt": "2026-06-26T10:21:18.923Z",
+      "paymentScreenshot": "/uploads/1782469278971-ChatGPT-Image-Jun-21--2026--10-51-06-AM.png",
+      "orderId": "MA-1782469279001-FB2DAC"
+    },
+    {
+      "_id": "5005e0db1a274de3a14a9a49",
+      "gateway": "UPI_QR",
+      "status": "Pending",
+      "amount": 414,
+      "currency": "INR",
+      "transactionId": "UPI_QR-1782483984750-BFFE9856",
+      "gatewayPaymentId": "",
+      "verificationToken": "8db83178e62fc414b4a5a17f85fca13e59a971083110b184",
+      "customer": {
+        "name": "Mohit Mitru",
+        "phone": "/875469453648",
+        "email": "mohit13mitru@gmail.com",
+        "address": "r6tu7iyoulikgufyutiouhfxjgkuhl"
+      },
+      "items": [
+        {
+          "product": "aa30874015d5c8a137634b3c",
+          "quantity": 2
+        }
+      ],
+      "couponCode": "MANAN10",
+      "createdAt": "2026-06-26T14:26:24.751Z"
+    },
+    {
+      "_id": "210149ed81b887794a918b23",
+      "gateway": "UPI_PAY",
+      "status": "Failed",
+      "amount": 828,
+      "currency": "INR",
+      "transactionId": "UPI_PAY-1782490902647-E9D9E0C5",
+      "gatewayPaymentId": "manual_e7c9f516cc9e6b2e",
+      "verificationToken": "a14acfb42e0a6b09182161642afcd8346ed477236e3a4dd7",
+      "customer": {
+        "name": "Mohit ",
+        "phone": "865312015478",
+        "email": "mohit@gmail.com",
+        "address": "xgtcyhjugkhiljo;kjhgfxdfghjk"
+      },
+      "items": [
+        {
+          "product": "aa30874015d5c8a137634b3c",
+          "quantity": 4
+        }
+      ],
+      "couponCode": "MANAN10",
+      "createdAt": "2026-06-26T16:21:42.647Z",
+      "paymentScreenshot": "/uploads/1782490902755-ChatGPT-Image-Jun-21--2026--10-51-06-AM.png",
+      "orderId": "MA-1782490902819-D095E4"
+    },
+    {
+      "_id": "a72e22c3622e11a13598a80b",
+      "gateway": "UPI_PAY",
+      "status": "Failed",
+      "amount": 207,
+      "currency": "INR",
+      "transactionId": "UPI_PAY-1782576244589-0B1B455D",
+      "gatewayPaymentId": "manual_99154d485b6c7d7b",
+      "verificationToken": "aca58092d66b24e752501f85a09f6ad4fbde2d4f0b1435a6",
+      "customer": {
+        "name": "Mohit Mitru",
+        "phone": "845120",
+        "email": "mohit13mitru@gmail.com",
+        "address": "574kjhgfhjbmhgcfdfugikjbvhgcf"
+      },
+      "items": [
+        {
+          "product": "94b2c5deead262ac6cd12358",
+          "quantity": 1
+        }
+      ],
+      "couponCode": "MANAN10",
+      "createdAt": "2026-06-27T16:04:04.589Z",
+      "paymentScreenshot": "/uploads/1782576244622-ChatGPT-Image-Jun-21--2026--10-51-06-AM.png",
+      "orderId": "MA-1782576244654-94CA83"
+    },
+    {
+      "_id": "5dc1d793760860c48f63c704",
+      "gateway": "UPI_PAY",
+      "status": "Submitted",
+      "amount": 216,
+      "currency": "INR",
+      "transactionId": "UPI_PAY-1782577020086-C38233CC",
+      "gatewayPaymentId": "manual_e79986127d0231c2",
+      "verificationToken": "3ca7d058c72b8f7d7ad07ec86eb352cd7202bd30aaec1fd5",
+      "customer": {
+        "name": "Mohit Mitru",
+        "phone": "8465132457854",
+        "email": "mohit13mitru@gmail.com",
+        "address": "gycuyswhflkcmdaovkmldoierjglewks"
+      },
+      "items": [
+        {
+          "product": "7ac40e3a8c5f7ad945a9373e",
+          "quantity": 1
+        }
+      ],
+      "couponCode": "MANAN10",
+      "createdAt": "2026-06-27T16:17:00.087Z",
+      "paymentScreenshot": "/uploads/1782577020116-ChatGPT-Image-Jun-21--2026--10-51-06-AM.png",
+      "orderId": "MA-1782577020149-3677E8"
+    },
+    {
+      "_id": "12c90779810e46dc40a0d636",
+      "gateway": "UPI_PAY",
+      "status": "Success",
+      "amount": 207,
+      "currency": "INR",
+      "transactionId": "UPI_PAY-1782577265859-260F8BDF",
+      "gatewayPaymentId": "manual_233cc4b95133c287",
+      "verificationToken": "eeb5c7d624fbe8994ceb0191a84b1bc8b896e5d072386a7f",
+      "customer": {
+        "name": "Mohit Mitru",
+        "phone": "7854215842",
+        "email": "mohit13mitru@gmail.com",
+        "address": "awesrdtyuiojhgfdzrdtfygukjn"
+      },
+      "items": [
+        {
+          "product": "aa30874015d5c8a137634b3c",
+          "quantity": 1
+        }
+      ],
+      "couponCode": "MANAN10",
+      "createdAt": "2026-06-27T16:21:05.859Z",
+      "paymentScreenshot": "/uploads/1782577265891-ChatGPT-Image-Jun-21--2026--10-51-06-AM.png",
+      "orderId": "MA-1782577265923-D0A129"
+    }
+  ]
+}

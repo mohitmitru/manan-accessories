@@ -1,13 +1,12 @@
 import express from "express";
 import Product from "../models/Product.js";
 import { protect } from "../middleware/auth.js";
-import { upload } from "../middleware/upload.js";
+import { upload, uploadManyToCloudinary } from "../middleware/upload.js";
 import { asyncHandler } from "../middleware/asyncHandler.js";
 import { createId, readStore, usingMongo, withSalePrice, writeStore } from "../config/localStore.js";
 
 const router = express.Router();
 
-const toImageUrls = (files = []) => files.map((file) => `/uploads/${file.filename}`);
 
 router.get("/", asyncHandler(async (req, res) => {
   const { search = "", category = "" } = req.query;
@@ -82,7 +81,7 @@ router.put("/:id", protect, upload.array("images", 5), asyncHandler(async (req, 
     if (index === -1) return res.status(404).json({ message: "Product not found" });
 
     const current = data.products[index];
-    const newImages = toImageUrls(req.files);
+    const newImages = await uploadManyToCloudinary(req.files, "manan-accessories/products");
     const keptImages = req.body.existingImages
       ? JSON.parse(req.body.existingImages)
       : current.images;
@@ -105,7 +104,7 @@ router.put("/:id", protect, upload.array("images", 5), asyncHandler(async (req, 
   const product = await Product.findById(req.params.id);
   if (!product) return res.status(404).json({ message: "Product not found" });
 
-  const newImages = toImageUrls(req.files);
+ const imageUrls = await uploadManyToCloudinary(req.files, "manan-accessories/products");
   const keptImages = req.body.existingImages
     ? JSON.parse(req.body.existingImages)
     : product.images;

@@ -14,6 +14,7 @@ const productSchema = new mongoose.Schema(
     description: { type: String, required: true },
     images: [{ type: String }],
     heroImage: { type: String, default: "" },
+    displayOrder: { type: Number, default: 0 },
     featured: { type: Boolean, default: false }
   },
   { timestamps: true }

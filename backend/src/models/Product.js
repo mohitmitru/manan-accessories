@@ -13,6 +13,7 @@ const productSchema = new mongoose.Schema(
     stock: { type: Number, default: 0, min: 0 },
     description: { type: String, required: true },
     images: [{ type: String }],
+    heroImage: { type: String, default: "" },
     featured: { type: Boolean, default: false }
   },
   { timestamps: true }

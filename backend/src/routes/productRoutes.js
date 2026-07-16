@@ -16,8 +16,7 @@ router.get("/", asyncHandler(async (req, res) => {
       .filter((product) => !search || product.name.toLowerCase().includes(String(search).toLowerCase()))
       .filter((product) => !category || product.category.toLowerCase() === String(category).toLowerCase())
       .map(withSalePrice)
-      .reverse();
-
+      .sort((a, b) => Number(a.displayOrder ?? 9999) - Number(b.displayOrder ?? 9999));
     return res.json(products);
   }
 
@@ -26,7 +25,35 @@ router.get("/", asyncHandler(async (req, res) => {
   if (search) query.name = { $regex: search, $options: "i" };
   if (category) query.category = { $regex: `^${category}$`, $options: "i" };
 
-  const products = await Product.find(query).sort({ createdAt: -1 });
+  const products = await Product.find(query).sort({ displayOrder: 1, createdAt: -1 });
+  res.json(products);
+}));
+
+router.patch("/order", protect, asyncHandler(async (req, res) => {
+  const ids = Array.isArray(req.body.ids) ? req.body.ids : [];
+  if (!ids.length) return res.status(400).json({ message: "Product ids are required" });
+
+  if (!usingMongo()) {
+    const data = readStore();
+    const orderMap = new Map(ids.map((id, index) => [id, index]));
+    data.products = data.products
+      .map((product, index) => ({
+        ...product,
+        displayOrder: orderMap.has(product._id) ? orderMap.get(product._id) : ids.length + index
+      }))
+      .sort((a, b) => Number(a.displayOrder || 0) - Number(b.displayOrder || 0));
+    writeStore(data);
+    return res.json(data.products.map(withSalePrice));
+  }
+
+  await Product.bulkWrite(ids.map((id, index) => ({
+    updateOne: {
+      filter: { _id: id },
+      update: { $set: { displayOrder: index } }
+    }
+  })));
+
+  const products = await Product.find().sort({ displayOrder: 1, createdAt: -1 });
   res.json(products);
 }));
 
@@ -34,13 +61,11 @@ router.get("/:id", asyncHandler(async (req, res) => {
   if (!usingMongo()) {
     const product = readStore().products.find((item) => item._id === req.params.id);
     if (!product) return res.status(404).json({ message: "Product not found" });
-
     return res.json(withSalePrice(product));
   }
 
   const product = await Product.findById(req.params.id);
   if (!product) return res.status(404).json({ message: "Product not found" });
-
   res.json(product);
 }));
 
@@ -49,7 +74,6 @@ router.post("/", protect, upload.array("images", 5), asyncHandler(async (req, re
 
   if (!usingMongo()) {
     const data = readStore();
-
     const product = {
       _id: createId(),
       name: req.body.name,
@@ -60,16 +84,16 @@ router.post("/", protect, upload.array("images", 5), asyncHandler(async (req, re
       description: req.body.description,
       featured: req.body.featured === "true",
       heroImage: req.body.heroImage || imageUrls[0] || "",
+      displayOrder: data.products.length,
       images: imageUrls,
       createdAt: new Date().toISOString()
     };
-
     data.products.push(product);
     writeStore(data);
-
     return res.status(201).json(withSalePrice(product));
   }
 
+  const displayOrder = await Product.countDocuments();
   const product = await Product.create({
     ...req.body,
     price: Number(req.body.price),
@@ -77,6 +101,7 @@ router.post("/", protect, upload.array("images", 5), asyncHandler(async (req, re
     stock: Number(req.body.stock || 0),
     featured: req.body.featured === "true",
     heroImage: req.body.heroImage || imageUrls[0] || "",
+    displayOrder,
     images: imageUrls
   });
 
@@ -89,17 +114,12 @@ router.put("/:id", protect, upload.array("images", 5), asyncHandler(async (req, 
   if (!usingMongo()) {
     const data = readStore();
     const index = data.products.findIndex((item) => item._id === req.params.id);
-
-    if (index === -1) {
-      return res.status(404).json({ message: "Product not found" });
-    }
+    if (index === -1) return res.status(404).json({ message: "Product not found" });
 
     const current = data.products[index];
-
     const keptImages = req.body.existingImages
       ? JSON.parse(req.body.existingImages)
       : current.images;
-
     data.products[index] = {
       ...current,
       name: req.body.name ?? current.name,
@@ -113,22 +133,16 @@ router.put("/:id", protect, upload.array("images", 5), asyncHandler(async (req, 
       images: [...keptImages, ...newImages],
       updatedAt: new Date().toISOString()
     };
-
     writeStore(data);
-
     return res.json(withSalePrice(data.products[index]));
   }
 
   const product = await Product.findById(req.params.id);
-
-  if (!product) {
-    return res.status(404).json({ message: "Product not found" });
-  }
+  if (!product) return res.status(404).json({ message: "Product not found" });
 
   const keptImages = req.body.existingImages
     ? JSON.parse(req.body.existingImages)
     : product.images;
-
   Object.assign(product, {
     name: req.body.name ?? product.name,
     price: req.body.price !== undefined ? Number(req.body.price) : product.price,
@@ -142,32 +156,21 @@ router.put("/:id", protect, upload.array("images", 5), asyncHandler(async (req, 
   });
 
   await product.save();
-
   res.json(product);
 }));
 
 router.delete("/:id", protect, asyncHandler(async (req, res) => {
   if (!usingMongo()) {
     const data = readStore();
-
     const nextProducts = data.products.filter((item) => item._id !== req.params.id);
-
-    if (nextProducts.length === data.products.length) {
-      return res.status(404).json({ message: "Product not found" });
-    }
-
+    if (nextProducts.length === data.products.length) return res.status(404).json({ message: "Product not found" });
     data.products = nextProducts;
     writeStore(data);
-
     return res.json({ message: "Product deleted" });
   }
 
   const product = await Product.findByIdAndDelete(req.params.id);
-
-  if (!product) {
-    return res.status(404).json({ message: "Product not found" });
-  }
-
+  if (!product) return res.status(404).json({ message: "Product not found" });
   res.json({ message: "Product deleted" });
 }));
 

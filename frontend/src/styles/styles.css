@@ -1431,10 +1431,10 @@ textarea { min-height: 110px; resize: vertical; }
 .table-wrap::-webkit-scrollbar-thumb:hover {
   background: #a98834;
 }
-table { width: 100%; border-collapse: collapse; min-width: 1060px; }
+table { width: 100%; border-collapse: collapse; min-width: 1180px; }
 th, td { padding: 12px; border-bottom: 1px solid #e1ddd4; text-align: left; white-space: nowrap; }
-td:nth-child(2) { min-width: 380px; }
-td:nth-child(6), td:nth-child(7) { min-width: 120px; }
+td:nth-child(3) { min-width: 380px; }
+td:nth-child(7), td:nth-child(8) { min-width: 120px; }
 .mini {
   position: relative;
   overflow: hidden;

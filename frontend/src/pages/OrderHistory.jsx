@@ -2,6 +2,8 @@ import { useCallback, useEffect, useState } from "react";
 import { RefreshCw, Search } from "lucide-react";
 import { api } from "../services/api.js";
 
+const onlyDigits = (value, maxLength) => value.replace(/\D/g, "").slice(0, maxLength);
+
 export default function OrderHistory() {
   const savedCustomer = JSON.parse(localStorage.getItem("manan_last_customer") || "{}");
   const [form, setForm] = useState({ email: savedCustomer.email || "", phone: savedCustomer.phone || "" });
@@ -46,7 +48,15 @@ export default function OrderHistory() {
 
       <form className="order-search panel" onSubmit={loadOrders}>
         <input required type="email" placeholder="Email used in checkout" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} />
-        <input required placeholder="Phone used in checkout" value={form.phone} onChange={(e) => setForm({ ...form, phone: e.target.value })} />
+        <input
+          required
+          inputMode="numeric"
+          pattern="[0-9]{10}"
+          maxLength={10}
+          placeholder="Phone used in checkout"
+          value={form.phone}
+          onChange={(e) => setForm({ ...form, phone: onlyDigits(e.target.value, 10) })}
+        />
         <button className="button" disabled={loading}>
           {loading ? <RefreshCw size={18} /> : <Search size={18} />}
           {loading ? "Refreshing..." : "Find Orders"}

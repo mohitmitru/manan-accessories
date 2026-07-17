@@ -1,6 +1,8 @@
 import { Navigate, Route, Routes } from "react-router-dom";
 import Navbar from "./components/Navbar.jsx";
 import Footer from "./components/Footer.jsx";
+import ScrollToTop from "./components/ScrollToTop.jsx";
+import BuyerInfoPopup from "./components/BuyerInfoPopup.jsx";
 import Home from "./pages/Home.jsx";
 import Products from "./pages/Products.jsx";
 import ProductDetails from "./pages/ProductDetails.jsx";
@@ -19,6 +21,7 @@ const ProtectedAdmin = ({ children }) => {
 export default function App() {
   return (
     <>
+      <ScrollToTop />
       <Routes>
         <Route path="/admin/login" element={<AdminLogin />} />
         <Route path="/admin" element={<ProtectedAdmin><AdminDashboard /></ProtectedAdmin>} />
@@ -31,6 +34,7 @@ export default function App() {
 function CustomerLayout() {
   return (
     <>
+      <BuyerInfoPopup />
       <Navbar />
       <main>
         <Routes>

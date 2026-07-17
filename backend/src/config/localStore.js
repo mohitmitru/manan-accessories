@@ -14,7 +14,7 @@ const defaultData = {
     upiId: "",
     qrCode: "",
     paymentLink: "",
-    instructions: "Pay securely. Your order will be created only after backend payment verification."
+    instructions: "Upload payment screenshot. Owner will verify your payment and confirm the order."
   }
 };
 

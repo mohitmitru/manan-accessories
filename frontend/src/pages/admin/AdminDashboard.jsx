@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { ArrowDown, ArrowUp, CreditCard, LayoutDashboard, ListOrdered, LogOut, Package, QrCode, ReceiptText, Save, Smartphone, Trash2, WalletCards } from "lucide-react";
+import { ArrowDown, ArrowUp, LayoutDashboard, ListOrdered, LogOut, Package, QrCode, ReceiptText, Save, Smartphone, Trash2, WalletCards } from "lucide-react";
 import { api, assetUrl } from "../../services/api.js";
 
 const emptyProduct = {
@@ -180,7 +180,7 @@ export default function AdminDashboard() {
     try {
       const data = new FormData();
       data.append("upiId", payment.upiId || "");
-      data.append("paymentLink", payment.paymentLink || "");
+      data.append("paymentLink", "");
       data.append("instructions", payment.instructions || "");
       if (qrCode) data.append("qrCode", qrCode);
       const res = await api.put("/payments", data);
@@ -202,7 +202,7 @@ export default function AdminDashboard() {
     try {
       const data = new FormData();
       data.append("upiId", payment.upiId || "");
-      data.append("paymentLink", payment.paymentLink || "");
+      data.append("paymentLink", "");
       data.append("instructions", payment.instructions || "");
       data.append("removeQr", "true");
       const res = await api.put("/payments", data);
@@ -225,11 +225,11 @@ export default function AdminDashboard() {
       const nextPayment = { ...payment, [field]: "" };
       const data = new FormData();
       data.append("upiId", nextPayment.upiId || "");
-      data.append("paymentLink", nextPayment.paymentLink || "");
+      data.append("paymentLink", "");
       data.append("instructions", nextPayment.instructions || "");
       const res = await api.put("/payments", data);
       setPayment(res.data);
-      setPaymentNotice(field === "upiId" ? "UPI ID removed." : "Payment link removed.");
+      setPaymentNotice("UPI ID removed.");
       await loadData();
     } catch (error) {
       setPaymentError(error.response?.data?.message || "Payment settings update failed.");
@@ -374,7 +374,6 @@ export default function AdminDashboard() {
             <div className="payment-admin-status">
               <span className={payment.upiId ? "ready" : ""}><Smartphone size={17} /> UPI Pay {payment.upiId ? "Ready" : "Missing"}</span>
               <span className={payment.qrCode ? "ready" : ""}><QrCode size={17} /> QR {payment.qrCode ? "Ready" : "Missing"}</span>
-              <span className={payment.paymentLink ? "ready" : ""}><CreditCard size={17} /> Link {payment.paymentLink ? "Ready" : "Missing"}</span>
             </div>
             {paymentNotice && <p className="notice success-note">{paymentNotice}</p>}
             {paymentError && <p className="error">{paymentError}</p>}
@@ -382,10 +381,6 @@ export default function AdminDashboard() {
               <input placeholder="example@upi" value={payment.upiId || ""} onChange={(e) => setPayment({ ...payment, upiId: e.target.value })} />
             </label>
             {payment.upiId && <button type="button" className="mini danger inline-action" onClick={() => clearPaymentField("upiId")} disabled={paymentSaving}>Remove UPI ID</button>}
-            <label className="upload-label">Payment link
-              <input placeholder="https://..." value={payment.paymentLink || ""} onChange={(e) => setPayment({ ...payment, paymentLink: e.target.value })} />
-            </label>
-            {payment.paymentLink && <button type="button" className="mini danger inline-action" onClick={() => clearPaymentField("paymentLink")} disabled={paymentSaving}>Remove Payment Link</button>}
             <label className="upload-label">Payment instructions
               <textarea placeholder="Payment instructions" value={payment.instructions || ""} onChange={(e) => setPayment({ ...payment, instructions: e.target.value })} />
             </label>

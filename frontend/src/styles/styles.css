@@ -527,8 +527,8 @@ main { min-height: 70vh; }
 }
 .buyer-popup {
   width: min(520px, 100%);
-  max-height: none;
-  overflow: visible;
+  max-height: calc(100dvh - 28px);
+  overflow: auto;
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 12px;
@@ -2216,29 +2216,29 @@ td:nth-child(7), td:nth-child(8) { min-width: 120px; }
     width: 100%;
   }
   .buyer-popup-backdrop {
-    align-items: start;
+    align-items: center;
     padding: 12px;
-    overflow-y: auto;
   }
   .buyer-popup {
-    max-height: none;
-    padding: 18px;
+    max-height: calc(100dvh - 24px);
+    padding: 16px;
     grid-template-columns: 1fr;
-    gap: 8px;
+    gap: 9px;
     animation-duration: .24s;
   }
   .buyer-popup h2 {
-    font-size: 1.55rem;
+    font-size: 1.42rem;
+    margin-bottom: 2px;
   }
   .buyer-popup input,
   .buyer-popup textarea {
-    min-height: 48px;
+    min-height: 44px;
   }
   .buyer-popup textarea {
-    min-height: 68px;
+    min-height: 62px;
   }
   .buyer-popup-row {
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
     gap: 8px;
   }
   .nav-links a { white-space: nowrap; }

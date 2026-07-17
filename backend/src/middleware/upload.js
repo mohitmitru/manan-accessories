@@ -10,9 +10,9 @@ if (!fs.existsSync(uploadDir)) {
 }
 
 const hasCloudinary = Boolean(
-  process.env.CLOUDINARY_CLOUD_NAME &&
-  process.env.CLOUDINARY_API_KEY &&
-  process.env.CLOUDINARY_API_SECRET
+  process.env.CLOUDINARY_CLOUD_NAME
+  && process.env.CLOUDINARY_API_KEY
+  && process.env.CLOUDINARY_API_SECRET
 );
 
 if (hasCloudinary) {
@@ -42,8 +42,24 @@ export const upload = multer({
   limits: { fileSize: 5 * 1024 * 1024 }
 });
 
-export const fileUrl = (file) =>
-  file?.path || file?.cloudinaryUrl || (file?.filename ? `/uploads/${file.filename}` : "");
+export const normalizeUploadUrl = (value = "") => {
+  if (!value) return "";
+  if (value.startsWith("http") || value.startsWith("/uploads/")) return value;
+
+  const normalized = value.replaceAll("\\", "/");
+  const uploadsIndex = normalized.lastIndexOf("/uploads/");
+  if (uploadsIndex >= 0) return normalized.slice(uploadsIndex);
+
+  return `/uploads/${path.basename(normalized)}`;
+};
+
+export const fileUrl = (file) => {
+  if (!file) return "";
+  if (file.cloudinaryUrl) return file.cloudinaryUrl;
+  if (file.filename) return `/uploads/${file.filename}`;
+  if (file.path) return normalizeUploadUrl(file.path);
+  return "";
+};
 
 export const filesToUrls = (files = []) => files.map(fileUrl).filter(Boolean);
 
@@ -56,7 +72,6 @@ export const uploadToCloudinary = async (file, folder = "manan-accessories") => 
     folder,
     resource_type: "image"
   });
-
   return result.secure_url;
 };
 

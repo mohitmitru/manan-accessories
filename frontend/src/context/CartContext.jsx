@@ -5,7 +5,6 @@ const CartContext = createContext(null);
 export const CartProvider = ({ children }) => {
   const [cart, setCart] = useState(() => JSON.parse(localStorage.getItem("manan_cart") || "[]"));
   const [wishlist, setWishlist] = useState(() => JSON.parse(localStorage.getItem("manan_wishlist") || "[]"));
-  const [coupon, setCoupon] = useState(() => localStorage.getItem("manan_coupon") || "");
 
   const saveCart = (nextCart) => {
     setCart(nextCart);
@@ -46,17 +45,12 @@ export const CartProvider = ({ children }) => {
     localStorage.setItem("manan_wishlist", JSON.stringify(nextWishlist));
   };
 
-  const applyCoupon = (code) => {
-    const cleanCode = String(code || "").trim().toUpperCase();
-    setCoupon(cleanCode);
-    localStorage.setItem("manan_coupon", cleanCode);
-  };
-
   const subtotal = useMemo(
     () => cart.reduce((sum, item) => sum + (item.salePrice || item.price) * item.quantity, 0),
     [cart]
   );
-  const discount = coupon === "MANAN10" ? Math.round(subtotal * 0.1) : 0;
+  const coupon = "";
+  const discount = 0;
   const total = Math.max(0, subtotal - discount);
 
   return (
@@ -71,8 +65,7 @@ export const CartProvider = ({ children }) => {
       updateQuantity,
       removeFromCart,
       clearCart,
-      toggleWishlist,
-      applyCoupon
+      toggleWishlist
     }}>
       {children}
     </CartContext.Provider>

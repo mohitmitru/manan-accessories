@@ -5,9 +5,10 @@ import Product from "../models/Product.js";
 import Order from "../models/Order.js";
 import Payment from "../models/Payment.js";
 import { protect } from "../middleware/auth.js";
-import { upload } from "../middleware/upload.js";
+import { normalizeUploadUrl, upload, uploadToCloudinary } from "../middleware/upload.js";
 import { asyncHandler } from "../middleware/asyncHandler.js";
 import { createId, readStore, usingMongo, withSalePrice, writeStore } from "../config/localStore.js";
+import { sendOwnerOrderEmail } from "../utils/emailService.js";
 
 const router = express.Router();
 
@@ -110,16 +111,18 @@ const createPaidOrder = async ({ payment, draft, paymentStatus = "Paid", orderSt
 
 router.get("/", asyncHandler(async (_req, res) => {
   if (!usingMongo()) {
-    return res.json(readStore().payment);
+    const payment = readStore().payment;
+    return res.json({ ...payment, qrCode: normalizeUploadUrl(payment.qrCode) });
   }
 
   let settings = await PaymentSetting.findOne();
   if (!settings) settings = await PaymentSetting.create({});
-  res.json(settings);
+  res.json({ ...settings.toObject(), qrCode: normalizeUploadUrl(settings.qrCode) });
 }));
 
 router.put("/", protect, upload.single("qrCode"), asyncHandler(async (req, res) => {
   const shouldRemoveQr = req.body.removeQr === "true";
+  const qrCodeUrl = req.file ? await uploadToCloudinary(req.file, "manan-accessories/payments") : "";
 
   if (!usingMongo()) {
     const data = readStore();
@@ -128,7 +131,7 @@ router.put("/", protect, upload.single("qrCode"), asyncHandler(async (req, res) 
       upiId: req.body.upiId ?? data.payment.upiId,
       paymentLink: req.body.paymentLink ?? data.payment.paymentLink,
       instructions: req.body.instructions ?? data.payment.instructions,
-      qrCode: shouldRemoveQr ? "" : req.file ? `/uploads/${req.file.filename}` : data.payment.qrCode
+      qrCode: shouldRemoveQr ? "" : normalizeUploadUrl(qrCodeUrl || data.payment.qrCode)
     };
     writeStore(data);
     return res.json(data.payment);
@@ -141,7 +144,8 @@ router.put("/", protect, upload.single("qrCode"), asyncHandler(async (req, res) 
   settings.paymentLink = req.body.paymentLink ?? settings.paymentLink;
   settings.instructions = req.body.instructions ?? settings.instructions;
   if (shouldRemoveQr) settings.qrCode = "";
-  if (req.file) settings.qrCode = `/uploads/${req.file.filename}`;
+  if (qrCodeUrl) settings.qrCode = normalizeUploadUrl(qrCodeUrl);
+  else settings.qrCode = normalizeUploadUrl(settings.qrCode);
 
   await settings.save();
   res.json(settings);
@@ -208,6 +212,7 @@ router.post("/checkout", asyncHandler(async (req, res) => {
 router.post("/:id/screenshot", upload.single("paymentScreenshot"), asyncHandler(async (req, res) => {
   const { verificationToken } = req.body;
   if (!req.file) return res.status(400).json({ message: "Payment screenshot is required" });
+  const screenshotUrl = await uploadToCloudinary(req.file, "manan-accessories/payment-screenshots");
 
   if (!usingMongo()) {
     const data = readStore();
@@ -217,7 +222,7 @@ router.post("/:id/screenshot", upload.single("paymentScreenshot"), asyncHandler(
     if (payment.status !== "Pending") return res.status(409).json({ message: "Payment already submitted" });
 
     payment.status = "Submitted";
-    payment.paymentScreenshot = `/uploads/${req.file.filename}`;
+    payment.paymentScreenshot = screenshotUrl;
     payment.gatewayPaymentId = `manual_${crypto.randomBytes(8).toString("hex")}`;
     const draft = await buildOrderDraft({ items: payment.items, couponCode: payment.couponCode }, data);
     const order = await createPaidOrder({ payment, draft, paymentStatus: "Submitted", orderStatus: "Payment Review" });
@@ -231,6 +236,7 @@ router.post("/:id/screenshot", upload.single("paymentScreenshot"), asyncHandler(
       latestPayment.orderId = order._id;
       writeStore(latestData);
     }
+    await sendOwnerOrderEmail(order);
     return res.json({ status: "Submitted", message: "Payment screenshot submitted. Owner will verify your order.", order });
   }
 
@@ -240,12 +246,13 @@ router.post("/:id/screenshot", upload.single("paymentScreenshot"), asyncHandler(
   if (payment.status !== "Pending") return res.status(409).json({ message: "Payment already submitted" });
 
   payment.status = "Submitted";
-  payment.paymentScreenshot = `/uploads/${req.file.filename}`;
+  payment.paymentScreenshot = screenshotUrl;
   payment.gatewayPaymentId = `manual_${crypto.randomBytes(8).toString("hex")}`;
   const draft = await buildOrderDraft({ items: payment.items, couponCode: payment.couponCode });
   const order = await createPaidOrder({ payment, draft, paymentStatus: "Submitted", orderStatus: "Payment Review" });
   payment.order = order._id;
   await payment.save();
+  await sendOwnerOrderEmail(order);
   res.json({ status: "Submitted", message: "Payment screenshot submitted. Owner will verify your order.", order });
 }));
 

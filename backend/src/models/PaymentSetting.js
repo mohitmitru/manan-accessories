@@ -7,7 +7,7 @@ const paymentSettingSchema = new mongoose.Schema(
     paymentLink: { type: String, default: "" },
     instructions: {
       type: String,
-      default: "Pay securely. Your order will be created only after backend payment verification."
+      default: "Upload payment screenshot. Owner will verify your payment and confirm the order."
     }
   },
   { timestamps: true }

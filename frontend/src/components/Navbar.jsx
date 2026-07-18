@@ -2,6 +2,7 @@ import { Link, NavLink, useLocation, useNavigate } from "react-router-dom";
 import { ChevronDown, Heart, Search, ShoppingBag } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { useCart } from "../context/CartContext.jsx";
+import ThemeToggle from "./ThemeToggle.jsx";
 
 export default function Navbar() {
   const { cart, wishlist } = useCart();
@@ -49,7 +50,7 @@ export default function Navbar() {
       </nav>
       <form className="search" onSubmit={handleSearch}>
         <Search size={18} />
-        <input name="search" placeholder="Search accessories" />
+        <input name="search" placeholder="Search" />
       </form>
       {buyer.name && (
         <div className="buyer-profile-wrap" ref={buyerMenuRef}>
@@ -75,7 +76,8 @@ export default function Navbar() {
         </div>
       )}
       <div className="nav-actions">
-        <Link className="icon-button" to="/wishlist" aria-label="Wishlist">
+        <ThemeToggle compact />
+        <Link className={`icon-button ${location.pathname === "/wishlist" ? "active" : ""}`} to="/wishlist" aria-label="Wishlist">
           <Heart size={20} />
           {wishlist.length > 0 && <span>{wishlist.length}</span>}
         </Link>

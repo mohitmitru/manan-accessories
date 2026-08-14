@@ -74,6 +74,10 @@ router.post("/", protect, upload.array("images", 5), asyncHandler(async (req, re
 
   if (!usingMongo()) {
     const data = readStore();
+    data.products = data.products.map((item) => ({
+      ...item,
+      displayOrder: Number(item.displayOrder ?? 0) + 1
+    }));
     const product = {
       _id: createId(),
       name: req.body.name,
@@ -84,16 +88,16 @@ router.post("/", protect, upload.array("images", 5), asyncHandler(async (req, re
       description: req.body.description,
       featured: req.body.featured === "true",
       heroImage: req.body.heroImage || imageUrls[0] || "",
-      displayOrder: data.products.length,
+      displayOrder: 0,
       images: imageUrls,
       createdAt: new Date().toISOString()
     };
-    data.products.push(product);
+    data.products.unshift(product);
     writeStore(data);
     return res.status(201).json(withSalePrice(product));
   }
 
-  const displayOrder = await Product.countDocuments();
+  await Product.updateMany({}, { $inc: { displayOrder: 1 } });
   const product = await Product.create({
     ...req.body,
     price: Number(req.body.price),
@@ -101,7 +105,7 @@ router.post("/", protect, upload.array("images", 5), asyncHandler(async (req, re
     stock: Number(req.body.stock || 0),
     featured: req.body.featured === "true",
     heroImage: req.body.heroImage || imageUrls[0] || "",
-    displayOrder,
+    displayOrder: 0,
     images: imageUrls
   });
 

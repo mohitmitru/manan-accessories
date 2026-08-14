@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { ArrowDown, ArrowUp, LayoutDashboard, ListOrdered, LogOut, Package, QrCode, ReceiptText, Save, Smartphone, Trash2, WalletCards } from "lucide-react";
 import { api, assetUrl } from "../../services/api.js";
+import ThemeToggle from "../../components/ThemeToggle.jsx";
 
 const emptyProduct = {
   name: "",
@@ -36,6 +37,9 @@ export default function AdminDashboard() {
   const [orderSavingId, setOrderSavingId] = useState("");
   const [orderNotice, setOrderNotice] = useState("");
   const [orderError, setOrderError] = useState("");
+  const [productSaving, setProductSaving] = useState(false);
+  const [productError, setProductError] = useState("");
+  const [productNotice, setProductNotice] = useState("");
   const [activeView, setActiveView] = useState(adminViewOptions.includes(savedAdminView) ? savedAdminView : "dashboard");
 
   const loadData = async () => {
@@ -80,6 +84,9 @@ export default function AdminDashboard() {
 
   const saveProduct = async (event) => {
     event.preventDefault();
+    setProductSaving(true);
+    setProductError("");
+    setProductNotice("");
     const data = new FormData();
     const sellingPrice = Number(product.price || 0);
     const mrp = Number(product.mrp || product.price || 0);
@@ -94,14 +101,21 @@ export default function AdminDashboard() {
     data.append("existingImages", JSON.stringify(existingImages));
     images.forEach((image) => data.append("images", image));
 
-    if (editingId) await api.put(`/products/${editingId}`, data);
-    else await api.post("/products", data);
+    try {
+      if (editingId) await api.put(`/products/${editingId}`, data);
+      else await api.post("/products", data);
 
-    setProduct(emptyProduct);
-    setEditingId(null);
-    setImages([]);
-    setExistingImages([]);
-    loadData();
+      setProduct(emptyProduct);
+      setEditingId(null);
+      setImages([]);
+      setExistingImages([]);
+      setProductNotice("Product saved successfully.");
+      await loadData();
+    } catch (error) {
+      setProductError(error.response?.data?.message || "Product save failed. Please login again and try.");
+    } finally {
+      setProductSaving(false);
+    }
   };
 
   const editProduct = (item) => {
@@ -126,8 +140,20 @@ export default function AdminDashboard() {
     if (product.heroImage === image) setProduct({ ...product, heroImage: "" });
   };
 
+  const setExistingImageFirst = (image) => {
+    const nextImages = [image, ...existingImages.filter((item) => item !== image)];
+    setExistingImages(nextImages);
+    if (!product.heroImage) setProduct({ ...product, heroImage: image });
+  };
+
   const removeNewImage = (index) => {
     setImages(images.filter((_, imageIndex) => imageIndex !== index));
+  };
+
+  const setNewImageFirst = (index) => {
+    const selectedImage = images[index];
+    if (!selectedImage) return;
+    setImages([selectedImage, ...images.filter((_, imageIndex) => imageIndex !== index)]);
   };
 
   const deleteProduct = async (item) => {
@@ -296,6 +322,7 @@ export default function AdminDashboard() {
           <button className={activeView === "orders" ? "active" : ""} onClick={() => setActiveView("orders")}><ReceiptText size={18} /> Orders</button>
           <button className={activeView === "payments" ? "active" : ""} onClick={() => setActiveView("payments")}><WalletCards size={18} /> Payments</button>
         </div>
+        <ThemeToggle />
         <button className="button secondary" onClick={logout}><LogOut size={18} /> Logout</button>
       </aside>
 
@@ -310,6 +337,8 @@ export default function AdminDashboard() {
         {activeView === "products" && <div className="admin-grid single-panel">
           <form className="panel" onSubmit={saveProduct}>
             <h2>{editingId ? "Edit Product" : "Add Product"}</h2>
+            {productNotice && <p className="notice success-note">{productNotice}</p>}
+            {productError && <p className="error">{productError}</p>}
             <input required placeholder="Product name" value={product.name} onChange={(e) => setProduct({ ...product, name: e.target.value })} />
             <input required type="number" placeholder="Price" value={product.price} onChange={(e) => setProduct({ ...product, price: e.target.value })} />
             <input type="number" placeholder="MRP" value={product.mrp} onChange={(e) => setProduct({ ...product, mrp: e.target.value })} />
@@ -335,9 +364,12 @@ export default function AdminDashboard() {
             </label>
             {editingId && existingImages.length > 0 && (
               <div className="image-manager">
-                {existingImages.map((image) => (
+                {existingImages.map((image, index) => (
                   <div className={`image-chip ${product.heroImage === image ? "selected-hero-image" : ""}`} key={image}>
                     <img src={assetUrl(image)} alt="Product preview" />
+                    <button type="button" className={`mini ${index === 0 ? "success" : ""}`} onClick={() => setExistingImageFirst(image)}>
+                      {index === 0 ? "First Image" : "Set First"}
+                    </button>
                     <button type="button" className={`mini ${product.heroImage === image ? "success" : ""}`} onClick={() => setProduct({ ...product, heroImage: image, featured: true })}>
                       {product.heroImage === image ? "Hero Image" : "Use in Hero"}
                     </button>
@@ -353,13 +385,16 @@ export default function AdminDashboard() {
                   {newImagePreviews.map((image, index) => (
                     <div className="image-chip" key={`${image.name}-${index}`}>
                       <img src={image.url} alt={image.name} />
+                      <button type="button" className={`mini ${index === 0 ? "success" : ""}`} onClick={() => setNewImageFirst(index)}>
+                        {index === 0 ? "First Image" : "Set First"}
+                      </button>
                       <button type="button" className="mini danger" onClick={() => removeNewImage(index)}>Remove</button>
                     </div>
                   ))}
                 </div>
               </>
             )}
-            <button className="button"><Save size={18} /> Save Product</button>
+            <button className="button" disabled={productSaving}><Save size={18} /> {productSaving ? "Saving..." : "Save Product"}</button>
           </form>
         </div>}
 

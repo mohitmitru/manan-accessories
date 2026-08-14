@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { api } from "../../services/api.js";
 
 export default function AdminLogin() {
+  const loginVersion = "owner-login-light-v2";
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
@@ -36,7 +37,7 @@ export default function AdminLogin() {
   };
 
   return (
-    <main className={`admin-login ${showPassword ? "show-password" : ""}`} onMouseMove={moveBeam}>
+    <main className={`admin-login ${showPassword ? "show-password" : ""}`} data-login-version={loginVersion} onMouseMove={moveBeam}>
       <form className="panel" onSubmit={login}>
         <p className="eyebrow">Owner Portal</p>
         <h1>Manan Accessories</h1>

@@ -18,6 +18,7 @@ export default function Checkout() {
     paymentMethod: "UPI_PAY"
   });
   const [paymentScreenshot, setPaymentScreenshot] = useState(null);
+  const [paymentScreenshotPreview, setPaymentScreenshotPreview] = useState("");
   const [paymentSession, setPaymentSession] = useState(null);
   const [paymentStatus, setPaymentStatus] = useState("Pending");
   const [processing, setProcessing] = useState(false);
@@ -28,6 +29,17 @@ export default function Checkout() {
   useEffect(() => {
     api.get("/payments").then((res) => setPayment(res.data));
   }, []);
+
+  useEffect(() => {
+    if (!paymentScreenshot) {
+      setPaymentScreenshotPreview("");
+      return undefined;
+    }
+
+    const previewUrl = URL.createObjectURL(paymentScreenshot);
+    setPaymentScreenshotPreview(previewUrl);
+    return () => URL.revokeObjectURL(previewUrl);
+  }, [paymentScreenshot]);
 
   const openPaymentStep = () => {
     setError("");
@@ -130,7 +142,7 @@ export default function Checkout() {
       <form className="panel checkout-form" onSubmit={handleCheckoutSubmit}>
         <div className="checkout-form-head">
           <div className="checkout-stage-tabs">
-            <span className="done">1. Delivery</span>
+            <span className={paymentOpen ? "done" : "active"}>1. Delivery</span>
             <span className={paymentOpen ? "active" : ""}>2. Payment</span>
           </div>
           <p className="eyebrow">{paymentOpen ? "Payment step" : "Delivery details"}</p>
@@ -259,9 +271,21 @@ export default function Checkout() {
             </div>
             <label className="upload-label proof-upload">
               <span><UploadCloud size={18} /> Upload payment screenshot (required)</span>
-              <input type="file" accept="image/*" onChange={(e) => setPaymentScreenshot(e.target.files[0])} />
-              {paymentScreenshot && <small>{paymentScreenshot.name}</small>}
+              <span className="file-picker-row payment-file-picker">
+                <span className="file-button">Choose File</span>
+                <span className="file-status">{paymentScreenshot ? "Screenshot selected" : "No file chosen"}</span>
+              </span>
+              <input className="hidden-file-input" type="file" accept="image/*" onChange={(e) => setPaymentScreenshot(e.target.files[0])} />
+              {paymentScreenshot && <small>Screenshot added successfully</small>}
             </label>
+            {paymentScreenshotPreview && (
+              <div className="proof-preview">
+                <img src={paymentScreenshotPreview} alt="Selected payment screenshot" />
+                <button type="button" className="mini danger" onClick={() => setPaymentScreenshot(null)}>
+                  Remove
+                </button>
+              </div>
+            )}
             <div className="proof-upload">
               <strong>Order will not be placed without payment screenshot.</strong>
               <small>Owner will verify your screenshot, then your order status becomes Placed.</small>

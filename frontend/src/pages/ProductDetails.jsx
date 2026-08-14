@@ -10,7 +10,6 @@ export default function ProductDetails() {
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
   const [quantity, setQuantity] = useState(1);
   const touchStartX = useRef(null);
-
   const { id } = useParams();
   const { addToCart } = useCart();
   const navigate = useNavigate();
@@ -26,16 +25,13 @@ export default function ProductDetails() {
 
   useEffect(() => {
     if (images.length <= 1) return undefined;
-
     const timer = setInterval(() => {
       setSelectedImageIndex((current) => (current + 1) % images.length);
     }, 4500);
-
     return () => clearInterval(timer);
   }, [images.length]);
 
   if (!product) return <p className="section">Loading product...</p>;
-
   const stockCount = Number(product.stock) || 0;
   const outOfStock = stockCount <= 0;
   const lowStock = stockCount > 0 && stockCount <= 10;
@@ -53,13 +49,10 @@ export default function ProductDetails() {
 
   const handleTouchEnd = (event) => {
     if (touchStartX.current === null) return;
-
     const endX = event.changedTouches[0]?.clientX ?? touchStartX.current;
     const distance = endX - touchStartX.current;
     touchStartX.current = null;
-
     if (Math.abs(distance) < 40) return;
-
     moveImage(distance < 0 ? 1 : -1);
   };
 
@@ -78,9 +71,13 @@ export default function ProductDetails() {
   return (
     <section className="details">
       <div className="details-image">
-        <div className="details-slider" onTouchStart={handleTouchStart} onTouchEnd={handleTouchEnd}>
+        <div
+          className="details-slider"
+          style={{ "--details-image": `url("${assetUrl(selectedImage)}")` }}
+          onTouchStart={handleTouchStart}
+          onTouchEnd={handleTouchEnd}
+        >
           <img src={assetUrl(selectedImage)} alt={product.name} onError={imageFallback} />
-
           {images.length > 1 && (
             <div className="details-slider-dots">
               {images.map((image, index) => (
@@ -95,7 +92,6 @@ export default function ProductDetails() {
             </div>
           )}
         </div>
-
         {images.length > 1 && (
           <div className="product-thumbs">
             {images.map((image, index) => (
@@ -111,21 +107,16 @@ export default function ProductDetails() {
           </div>
         )}
       </div>
-
       <div className="details-copy">
         <p className="category">{product.category}</p>
         <h1>{product.name}</h1>
-
         <div className="price-row large">
           <strong>Rs. {product.salePrice || product.price}</strong>
           {product.discount > 0 && <span>Rs. {product.price}</span>}
         </div>
-
         <p>{product.description}</p>
-
         {outOfStock && <p className="stock">Out of stock</p>}
         {lowStock && <p className="stock low-stock">Only {stockCount} left</p>}
-
         <QuantityControl
           label="Quantity"
           value={quantity}
@@ -134,15 +125,9 @@ export default function ProductDetails() {
           onChange={setQuantity}
           className="details-quantity"
         />
-
         <div className="action-row">
-          <button className="button secondary" disabled={outOfStock} onClick={addAndOpenCart}>
-            <ShoppingCart size={18} /> Add to Cart
-          </button>
-
-          <button className="button" disabled={outOfStock} onClick={buyNow}>
-            <Zap size={18} /> Buy Now
-          </button>
+          <button className="button secondary" disabled={outOfStock} onClick={addAndOpenCart}><ShoppingCart size={18} /> Add to Cart</button>
+          <button className="button" disabled={outOfStock} onClick={buyNow}><Zap size={18} /> Buy Now</button>
         </div>
       </div>
     </section>

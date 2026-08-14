@@ -28,7 +28,6 @@ export default function Home() {
     };
 
     loadProducts();
-
     return () => {
       active = false;
       clearTimeout(retryTimer);
@@ -36,18 +35,11 @@ export default function Home() {
   }, []);
 
   const displayProducts = products.slice(0, 8);
-
-  const ownerSelectedHeroProducts = products.filter(
-    (product) => product.featured && (product.heroImage || product.images?.length)
-  );
-
+  const ownerSelectedHeroProducts = products.filter((product) => product.featured && (product.heroImage || product.images?.length));
   const heroProducts = ownerSelectedHeroProducts.length
     ? ownerSelectedHeroProducts
     : products.filter((product) => product.images?.length);
-
-  const heroSignature = heroProducts
-    .map((product) => `${product._id}:${product.heroImage || product.images?.[0] || ""}`)
-    .join("|");
+  const heroSignature = heroProducts.map((product) => `${product._id}:${product.heroImage || product.images?.[0] || ""}`).join("|");
 
   useEffect(() => {
     setHeroIndex(0);
@@ -55,17 +47,14 @@ export default function Home() {
 
   useEffect(() => {
     if (heroProducts.length <= 1) return undefined;
-
     const timer = setInterval(() => {
       setHeroIndex((current) => (current + 1) % heroProducts.length);
     }, 3500);
-
     return () => clearInterval(timer);
   }, [heroProducts.length, heroSignature]);
 
   const heroProduct = heroProducts[heroIndex] || products[0];
   const heroImage = heroProduct?.heroImage || heroProduct?.images?.[0];
-
   const heroStyle = heroImage
     ? {
         background: `linear-gradient(90deg, rgba(16, 24, 22, .86), rgba(16, 24, 22, .34)), url("${assetUrl(heroImage)}") center 42%/cover`
@@ -80,23 +69,14 @@ export default function Home() {
             <img src={assetUrl(heroImage)} alt={heroProduct?.name || "Manan Accessories"} />
           </div>
         )}
-
         <div className="hero-content" key={heroProduct?._id || "default-hero"}>
           <p className="eyebrow">{heroProduct?.category || "Premium daily style"}</p>
           <h1>Manan Accessories</h1>
-          <p>
-            {heroProduct
-              ? heroProduct.name
-              : "Curated fashion essentials with elegant finishing, practical pricing and a boutique shopping feel."}
-          </p>
-
+          <p>{heroProduct ? heroProduct.name : "Curated fashion essentials with elegant finishing, practical pricing and a boutique shopping feel."}</p>
           <div className="hero-actions">
-            <Link className="button" to="/products">
-              Shop Collection <ArrowRight size={18} />
-            </Link>
+            <Link className="button" to="/products">Shop Collection <ArrowRight size={18} /></Link>
             <span>Fresh drops for everyday style</span>
           </div>
-
           {heroProducts.length > 1 && (
             <div className="hero-dots">
               {heroProducts.map((product, index) => (
@@ -111,7 +91,6 @@ export default function Home() {
             </div>
           )}
         </div>
-
         <div className="hero-float" key={`${heroProduct?._id || "default"}-float`}>
           <span>New</span>
           <strong>{heroProduct?.category || "Accessories"}</strong>
@@ -120,15 +99,9 @@ export default function Home() {
       </section>
 
       <section className="feature-strip">
-        <span>
-          <Sparkles size={20} /> Premium picks
-        </span>
-        <span>
-          <Truck size={20} /> Easy ordering
-        </span>
-        <span>
-          <ShieldCheck size={20} /> Owner verified payments
-        </span>
+        <span><Sparkles size={20} /> Premium picks</span>
+        <span><Truck size={20} /> Easy ordering</span>
+        <span><ShieldCheck size={20} /> Owner verified payments</span>
       </section>
 
       <section className="section home-products">
@@ -139,21 +112,14 @@ export default function Home() {
           </div>
           <Link to="/products">View all</Link>
         </div>
-
         <div className="product-grid compact-products">
-          {displayProducts.map((product) => (
-            <ProductCard key={product._id} product={product} openCartOnAdd />
-          ))}
+          {displayProducts.map((product) => <ProductCard key={product._id} product={product} openCartOnAdd />)}
         </div>
-
         {products.length > 0 && (
           <div className="products-view-all">
-            <Link className="button secondary" to="/products">
-              View all products
-            </Link>
+            <Link className="button secondary" to="/products">View all products</Link>
           </div>
         )}
-
         {!products.length && <p className="empty">Products will appear here after owner adds them.</p>}
       </section>
 
@@ -162,7 +128,6 @@ export default function Home() {
           <h2>Shop by Category</h2>
           <Link to="/products">View all</Link>
         </div>
-
         <div className="category-grid">
           {categories.map((category, index) => (
             <Link key={category} to={`/products?category=${encodeURIComponent(category)}`}>

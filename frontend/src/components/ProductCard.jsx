@@ -10,7 +10,6 @@ export default function ProductCard({ product, openCartOnAdd = false }) {
   const swipedImage = useRef(false);
   const { addToCart, toggleWishlist, wishlist } = useCart();
   const navigate = useNavigate();
-
   const liked = wishlist.some((item) => item._id === product._id);
   const stockCount = Number(product.stock) || 0;
   const outOfStock = stockCount <= 0;
@@ -24,11 +23,9 @@ export default function ProductCard({ product, openCartOnAdd = false }) {
 
   useEffect(() => {
     if (images.length <= 1) return undefined;
-
     const timer = setInterval(() => {
       setImageIndex((current) => (current + 1) % images.length);
     }, 3500);
-
     return () => clearInterval(timer);
   }, [images.length]);
 
@@ -54,20 +51,16 @@ export default function ProductCard({ product, openCartOnAdd = false }) {
 
   const handleTouchEnd = (event) => {
     if (touchStartX.current === null) return;
-
     const endX = event.changedTouches[0]?.clientX ?? touchStartX.current;
     const distance = endX - touchStartX.current;
     touchStartX.current = null;
-
     if (Math.abs(distance) < 40) return;
-
     swipedImage.current = true;
     moveImage(distance < 0 ? 1 : -1);
   };
 
   const handleMediaClick = (event) => {
     if (!swipedImage.current) return;
-
     event.preventDefault();
     swipedImage.current = false;
   };
@@ -77,21 +70,13 @@ export default function ProductCard({ product, openCartOnAdd = false }) {
       <Link
         className="product-media"
         to={`/products/${product._id}`}
+        style={{ "--product-image": `url("${assetUrl(activeImage)}")` }}
         onClick={handleMediaClick}
         onTouchStart={handleTouchStart}
         onTouchEnd={handleTouchEnd}
       >
-        <img
-          className="product-main-image"
-          src={assetUrl(activeImage)}
-          alt={product.name}
-          onError={imageFallback}
-        />
-
-        {product.discount > 0 && (
-          <span className="discount-badge">{product.discount}% off</span>
-        )}
-
+        <img className="product-main-image" src={assetUrl(activeImage)} alt={product.name} onError={imageFallback} />
+        {product.discount > 0 && <span className="discount-badge">{product.discount}% off</span>}
         {images.length > 1 && (
           <div className="product-slider-dots">
             {images.map((image, index) => (
@@ -100,34 +85,24 @@ export default function ProductCard({ product, openCartOnAdd = false }) {
           </div>
         )}
       </Link>
-
       <div className="product-card-body">
         <div className="product-meta">
           <p className="category">{product.category}</p>
-          <button
-            className={`heart-button ${liked ? "active" : ""}`}
-            onClick={() => toggleWishlist(product)}
-            aria-label="Wishlist"
-          >
+          <button className={`heart-button ${liked ? "active" : ""}`} onClick={() => toggleWishlist(product)} aria-label="Wishlist">
             <Heart size={18} />
           </button>
         </div>
-
         <h3>{product.name}</h3>
-
         <div className="price-row">
           <strong>Rs. {product.salePrice || product.price}</strong>
           {product.discount > 0 && <span>Rs. {product.price}</span>}
         </div>
-
         {outOfStock && <p className="stock">Out of stock</p>}
         {lowStock && <p className="stock low-stock">Only {stockCount} left</p>}
-
         <div className="product-actions">
           <button disabled={outOfStock} onClick={addAndOpenCart} className="button secondary">
             <ShoppingCart size={18} /> {outOfStock ? "Unavailable" : "Add"}
           </button>
-
           <button disabled={outOfStock} onClick={buyNow} className="button">
             <Zap size={18} /> Buy
           </button>
